@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Editor;
 use App\Form\EditorType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ class EditorController extends AbstractController
     }
 
     #[Route('/new', name: 'app_admin_editor_new', methods: ['GET', 'POST'])]
-    public function new(Request $request): Response
+    public function new(Request $request, EntityManagerInterface $manager): Response
     {
         # Création d'une instance de Editor
         $editor = new Editor();
@@ -34,7 +35,10 @@ class EditorController extends AbstractController
 
         # Vérifier que le formulaire est bien soumis et qu'il est valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // Do something
+            $manager->persist($editor);
+            $manager->flush();
+
+            return $this->redirectToRoute('app_admin_editor_new');
         }
 
         # Le formulaire est passé au template

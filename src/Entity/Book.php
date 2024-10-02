@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Bookstatus;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
