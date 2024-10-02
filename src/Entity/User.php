@@ -4,13 +4,16 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 #[ORM\UniqueEntity(['email'])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -36,24 +39,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * contient au moins un caractère spécial qui n'est pas un espace
      * fait entre 8 et 32 caractères de long
      */
-    #[Assert\NotBlank()]
     #[Assert\NotCompromisedPassword()]
-    #[Assert\PasswordStrength(minScore: PasswordStrength::STRENGTH_STRONG)]
+    #[Assert\PasswordStrength(minScore: Assert\PasswordStrength::STRENGTH_STRONG)]
     #[Assert\Regex('/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{8,32}$/')]
     #[ORM\Column]
     private ?string $password = null;
-
-    #[ORM\Column(length: 255)]
+    
     #[Assert\NotBlank()]
+    #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
+    #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank()]
     #[Assert\Email()]
+    #[Assert\NotBlank()]
+    #[ORM\Column(length: 255)]
     private ?string $email = null;
 
     public function getId(): ?int
