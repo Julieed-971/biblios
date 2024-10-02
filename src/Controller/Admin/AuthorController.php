@@ -44,7 +44,7 @@ class AuthorController extends AbstractController
 
     #[Route('/new', name: 'app_admin_author_new', methods: ['GET', 'POST'])]
     #[Route('/{id}/edit', name: 'app_admin_author_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $manager): Response
+    public function new(?Author $author, Request $request, EntityManagerInterface $manager): Response
     {
         # Création d'une instance de Author si  $author  vaut  null  , on lui assignera comme valeur une nouvelle instance de  Author
         $author ??= new Author();
