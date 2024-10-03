@@ -30,16 +30,26 @@ class BookController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
     #[Route('/new', name: 'app_admin_book_new', methods: ['GET', 'POST'])]
     #[Route('/{id}/edit', name: 'app_admin_book_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function new(?Book $book, Request $request, EntityManagerInterface $manager): Response
     {
+        if ($book) {
+            $this->denyAccessUnlessGranted('ROLE_EDITION_DE_LIVRE');
+        }
+
         $book ??= new Book();
         $form = $this->createForm(BookType::class, $book);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $user = $this->getUser();
+            if (!$book->getID() && $user instanceof User) {
+                $book->setCreatedBy($user);
+            }
             $manager->persist($book);
             $manager->flush();
 

@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 # Utilisation d'un préfixe pour éviter de le réécrire à chaque création de route
 #[Route('/admin/author')]
@@ -42,10 +43,14 @@ class AuthorController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
     #[Route('/new', name: 'app_admin_author_new', methods: ['GET', 'POST'])]
     #[Route('/{id}/edit', name: 'app_admin_author_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function new(?Author $author, Request $request, EntityManagerInterface $manager): Response
     {
+        if ($author) {
+            $this->denyAccessUnlessGranted('ROLE_EDITION_DE_LIVRE');
+        }
         # Création d'une instance de Author si  $author  vaut  null  , on lui assignera comme valeur une nouvelle instance de  Author
         $author ??= new Author();
         # Création du formulaire grâce au raccourci 'createForm' des controllers,
