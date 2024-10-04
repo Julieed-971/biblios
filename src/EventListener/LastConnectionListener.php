@@ -21,7 +21,7 @@ final class LastConnectionListener
         
         // Vérifier si instance de User
         if ($user instanceof User) {
-            // Récupérer la date du jour
+            // Mettre à jour propriété lastconnectedat avec la date du jour
             $user->setLastConnectedAt(new \DateTimeImmutable());
             // Mettre à jour la propriété lastConnectedAt du current user dans la base de données
             $this->manager->flush();
